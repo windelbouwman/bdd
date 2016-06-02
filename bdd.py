@@ -177,23 +177,3 @@ def parse_feature(feature_file):
     with open(feature_file, 'r') as f:
         feature = parser.parse(f)
     return feature
-
-
-def load_feature(filename):
-    feature = parse_feature(filename)
-    kls = make_test_case(feature)
-    loader = unittest.TestLoader()
-    return loader.loadTestsFromTestCase(kls)
-
-
-if __name__ == '__main__':
-    from importlib.machinery import SourceFileLoader
-    a = SourceFileLoader('steps', 'steps.py').load_module()
-    # runpy.run_path('steps.py')
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('featurefile')
-    args = parser.parse_args()
-    suite = load_feature(args.featurefile)
-    runner = unittest.TextTestRunner()
-    runner.run(suite)
