@@ -1,5 +1,7 @@
+"""
+    A library to load BDD features as unittest.TestCase classes.
+"""
 
-import argparse
 import logging
 import unittest
 from collections import namedtuple, defaultdict
@@ -9,7 +11,7 @@ import parse
 __version__ = '0.1'
 
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 StepImpl = namedtuple('StepImpl', ['action', 'pattern', 'func'])
 
 
@@ -17,12 +19,9 @@ class Context:
     def __init__(self):
         self.stepmap = defaultdict(list)
 
-    def register(self, typ, pattern, func):
-        self.stepmap[typ].append(StepImpl(typ, pattern, func))
-
     def deco(self, typ, pattern):
         def fnx(func):
-            self.register(typ, pattern, func)
+            self.stepmap[typ].append(StepImpl(typ, pattern, func))
             return func
         return fnx
 
