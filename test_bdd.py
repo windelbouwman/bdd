@@ -41,8 +41,8 @@ class TestUnittestGenerator(unittest.TestCase):
     def test_a_feature(self):
         parser = bdd.Parser()
         feature = parser.parse(io.StringIO(SIMPLE_FEATURE))
-        ctx = bdd.Context()
-        ctx.make_test_case(feature)
+        env = bdd.Environment()
+        env.make_test_case(feature)
 
 
 if __name__ == '__main__':

@@ -12,5 +12,5 @@ setup(
     version=__version__,
     author='Windel Bouwman',
     py_modules=['bdd'],
-    url='https://github.com/windel/bdd',
+    url='https://github.com/windelbouwman/bdd',
 )
