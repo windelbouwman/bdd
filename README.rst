@@ -100,9 +100,13 @@ A really good python bdd library is behave_.
 Changelog
 =========
 
-**0.2**
+**0.3**
 
 - Add tag support
+
+**0.2 (Jun 4, 2016)**
+
+- Added more demos
 
 **0.1 (Jun 2, 2016)**
 
