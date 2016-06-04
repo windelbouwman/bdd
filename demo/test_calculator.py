@@ -1,5 +1,4 @@
-import os
-from bdd import Environment
+from bdd import Environment, rel
 from calculator import Calculator
 
 env = Environment()
@@ -19,11 +18,6 @@ def step(context, value):
 @env.then('the result is {:d}')
 def step(context, value):
     assert context.calculator.value == value
-
-
-def rel(p):
-    this_dir = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(this_dir, p)
 
 
 CalculatorTestCase = env.load_feature_as_testcase(rel('calculator.feature'))

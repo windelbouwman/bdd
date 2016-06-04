@@ -1,9 +1,9 @@
-"""
-    A library to load BDD features as unittest.TestCase classes.
-"""
+""" A library to load BDD features as unittest.TestCase classes. """
 
 import logging
 import unittest
+import inspect
+import os
 from collections import namedtuple, defaultdict
 import parse
 
@@ -11,51 +11,62 @@ import parse
 __version__ = '0.3'
 
 
+def rel(filename):
+    """ Return an absolute path relative to the file where this function is
+    called from """
+    frame = inspect.stack()[1]
+    dirname = os.path.dirname(os.path.abspath(frame[1]))
+    return os.path.join(dirname, filename)
+
+
 logger = logging.getLogger(__name__)
-StepImpl = namedtuple('StepImpl', ['action', 'pattern', 'func'])
 
 
 class Environment:
+    """ The environment in which features can be run """
     def __init__(self):
-        self.stepmap = defaultdict(list)
+        self.step_impls = defaultdict(list)
         self.context = Context()
 
-    def deco(self, typ, pattern):
-        def fnx(func):
-            self.stepmap[typ].append(StepImpl(typ, pattern, func))
-            return func
-        return fnx
-
     def given(self, pattern):
-        return self.deco('given', pattern)
+        """ Decorator to register a 'given' implementation """
+        return self.make_decorator('given', pattern)
 
     def when(self, pattern):
-        return self.deco('when', pattern)
+        """ Decorator to register a 'when' implementation """
+        return self.make_decorator('when', pattern)
 
     def then(self, pattern):
-        return self.deco('then', pattern)
+        """ Decorator to register a 'then' implementation """
+        return self.make_decorator('then', pattern)
 
     def load_feature_as_testcase(self, filename):
         """ Load a feature file and convert it to a testcase """
         feature = parse_feature(filename)
         return self.make_test_case(feature)
 
-    def make_test_case(self, feature):
+    def make_decorator(self, typ, pattern):
+        """ Create a decorator for a certain step kind """
+        def fnx(func):
+            self.step_impls[typ].append(StepImpl(typ, pattern, func))
+            return func
+        return fnx
+
+    def make_test_case(self, feature, name='FeatureTestCase'):
         """ Create a unittest.TestCase subclass from a feature """
-        name = 'FeatureTestCase'
         attrs = {}
-        for i, scenario in enumerate(feature):
+        for i, scenario in enumerate(feature.scenarios):
             test_name = 'test_scenario_{}'.format(i)
             attrs[test_name] = self.make_scenario_test_function(scenario)
         return type(name, (unittest.TestCase,), attrs)
 
-    def exe_step(self, step):
+    def execute_step(self, step):
         """ Execute the step in the current context """
         action = step.action.lower()
-        for x in self.stepmap[action]:
-            res = parse.parse(x.pattern, step.sentence)
+        for step_impl in self.step_impls[action]:
+            res = parse.parse(step_impl.pattern, step.sentence)
             if res:
-                x.func(self.context, *res.fixed)
+                step_impl.func(self.context, *res.fixed)
                 break
         else:
             raise Exception('No step impl found for {}'.format(step))
@@ -65,28 +76,22 @@ class Environment:
         def test_impl(zelf):
             logger.debug('Scenario: "%s"', scenario.description)
             for step in scenario.steps:
-                logging.debug('Step: "%s"', step.action + ' ' + step.sentence)
-                self.exe_step(step)
+                logging.debug('%s %s', step.action, step.sentence)
+                self.execute_step(step)
         test_impl.__doc__ = scenario.description
         return test_impl
 
 
 class Context:
+    """ This object will be passed to all the steps and can be used to store
+        data """
     pass
 
 
-class Feature:
-    def __init__(self, description, tags, scenarios):
-        self.description = description
-        self.tags = tags
-        self.scenarios = scenarios
-
-    def __iter__(self):
-        return iter(self.scenarios)
-
-
+Feature = namedtuple('Feature', ['description', 'tags', 'scenarios'])
 Scenario = namedtuple('Scenario', ['description', 'tags', 'steps'])
 Step = namedtuple('Step', ['action', 'sentence'])
+StepImpl = namedtuple('StepImpl', ['action', 'pattern', 'func'])
 
 
 class Parser:
@@ -97,10 +102,7 @@ class Parser:
 
     def parse(self, lines):
         self.prepare(lines)
-        feature = self.parse_feature()
-        if not self.at_end:
-            self.error('No more text expected')
-        return feature
+        return self.parse_feature()
 
     def parse_feature(self):
         """ Parse a single feature """
@@ -110,6 +112,7 @@ class Parser:
         while not self.peak.startswith(('Scenario:', '@')):
             self.consume()
         scenarios = self.parse_scenarios()
+        assert self.at_end
         return Feature(description, tags, scenarios)
 
     def parse_scenarios(self):
@@ -188,7 +191,7 @@ class Parser:
 
     def error(self, msg):
         """ Generate an error at the current location """
-        raise Exception('{}: {}'.format(msg, self._current_line))
+        raise SyntaxError('{}: {}'.format(msg, self._current_line))
 
 
 def parse_feature(feature_file):

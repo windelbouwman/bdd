@@ -9,6 +9,7 @@ from bdd import __version__
 
 setup(
     name='bdd',
+    description='Library to convert BDD features into TestCase classes',
     version=__version__,
     author='Windel Bouwman',
     py_modules=['bdd'],

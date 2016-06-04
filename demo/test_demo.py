@@ -1,13 +1,7 @@
-import os
-from bdd import Environment
+from bdd import Environment, rel
 
 
-this_dir = os.path.dirname(os.path.abspath(__file__))
 env = Environment()
-
-
-def relpath(p):
-    return os.path.join(this_dir, p)
 
 
 @env.given('a product of {:d} euro')
@@ -48,5 +42,5 @@ def step(context):
     assert not context.logged_in
 
 
-CartTestCase = env.load_feature_as_testcase(relpath('cart.feature'))
-AccountTestCase = env.load_feature_as_testcase(relpath('account.feature'))
+CartTestCase = env.load_feature_as_testcase(rel('cart.feature'))
+AccountTestCase = env.load_feature_as_testcase(rel('account.feature'))
