@@ -111,3 +111,6 @@ Changelog
 .. image:: https://travis-ci.org/windelbouwman/bdd.svg?branch=master
    :target: https://travis-ci.org/windelbouwman/bdd
 
+.. image:: https://codecov.io/gh/windelbouwman/bdd/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/windelbouwman/bdd
+
