@@ -11,10 +11,10 @@ import parse
 __version__ = '0.3'
 
 
-def rel(filename):
+def rel(filename, back=1):
     """ Return an absolute path relative to the file where this function is
     called from """
-    frame = inspect.stack()[1]
+    frame = inspect.stack()[back]
     dirname = os.path.dirname(os.path.abspath(frame[1]))
     return os.path.join(dirname, filename)
 
@@ -41,7 +41,12 @@ class Environment:
         return self.make_decorator('then', pattern)
 
     def load_feature_as_testcase(self, filename):
-        """ Load a feature file and convert it to a testcase """
+        """ Load a feature file and convert it to a testcase.
+            If the filename is not absolute, it is assumed to be relative
+            to the calling scripts directory.
+        """
+        if not os.path.isabs(filename):
+            filename = rel(filename, back=2)
         feature = parse_feature(filename)
         return self.make_test_case(feature)
 

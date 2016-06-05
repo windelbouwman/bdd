@@ -53,10 +53,6 @@ run this feature:
     def step(context, value):
         assert context.calculator.value == value
 
-    def rel(p):
-        this_dir = os.path.dirname(os.path.abspath(__file__))
-        return os.path.join(this_dir, p)
-
     CalculatorTestCase = env.load_feature_as_testcase('calculator.feature')
 
 Finally, write the actual production code to implement the calculator, in
@@ -92,7 +88,7 @@ Now run the tests with, for example, pytest:
 References
 ==========
 
-A really good python bdd library is behave_.
+Another really good and mature python bdd library is behave_.
 
 .. _behave: http://pythonhosted.org/behave/
 
@@ -100,7 +96,7 @@ A really good python bdd library is behave_.
 Changelog
 =========
 
-**0.3**
+**0.3 (Planned) **
 
 - Add tag support
 

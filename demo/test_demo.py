@@ -1,4 +1,4 @@
-from bdd import Environment, rel
+from bdd import Environment
 
 
 env = Environment()
@@ -42,5 +42,5 @@ def step(context):
     assert not context.logged_in
 
 
-CartTestCase = env.load_feature_as_testcase(rel('cart.feature'))
-AccountTestCase = env.load_feature_as_testcase(rel('account.feature'))
+CartTestCase = env.load_feature_as_testcase('cart.feature')
+AccountTestCase = env.load_feature_as_testcase('account.feature')

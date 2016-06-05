@@ -1,4 +1,4 @@
-from bdd import Environment, rel
+from bdd import Environment
 from calculator import Calculator
 
 env = Environment()
@@ -20,4 +20,4 @@ def step(context, value):
     assert context.calculator.value == value
 
 
-CalculatorTestCase = env.load_feature_as_testcase(rel('calculator.feature'))
+CalculatorTestCase = env.load_feature_as_testcase('calculator.feature')
