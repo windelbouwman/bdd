@@ -96,7 +96,7 @@ Another really good and mature python bdd library is behave_.
 Changelog
 =========
 
-**0.3 (Planned) **
+**0.3 (Planned)**
 
 - Add tag support
 
@@ -112,5 +112,7 @@ Changelog
    :target: https://travis-ci.org/windelbouwman/bdd
 
 .. image:: https://codecov.io/gh/windelbouwman/bdd/branch/master/graph/badge.svg
-  :target: https://codecov.io/gh/windelbouwman/bdd
+   :target: https://codecov.io/gh/windelbouwman/bdd
 
+.. image:: https://api.codacy.com/project/badge/Grade/b2a15185bffe482488ce9bb48aadf99e
+   :target: https://www.codacy.com/app/windel-bouwman/bdd
