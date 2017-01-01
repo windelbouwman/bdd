@@ -5,3 +5,9 @@ class Calculator:
 
     def add(self, value):
         self.value += value
+
+    def substract(self, value):
+        self.value -= value
+
+    def multiply(self, value):
+        self.value *= value

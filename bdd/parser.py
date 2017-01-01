@@ -103,8 +103,8 @@ class Parser:
         raise SyntaxError('{}: {}'.format(msg, self._current_line))
 
 
-def parse_feature(feature_file):
-    """ Parse a feature from file """
+def load_feature(feature_file):
+    """ Load a feature from file """
     parser = Parser()
     with open(feature_file, 'r') as f:
         feature = parser.parse(f)

@@ -1,14 +1,18 @@
 """ Run bdd """
 
 import argparse
-from .runner import Environment
+from .runner import Environment, Runner
+from .utils import load_features_from_dir
 
 
 parser = argparse.ArgumentParser()
-
+parser.add_argument('feature_dir')
 args = parser.parse_args()
 
-print(args)
+# Load features:
+features = load_features_from_dir(args.feature_dir)
+env = Environment()
 
-raise NotImplementedError('TODO')
-
+# Run the features:
+runner = Runner()
+runner.run(features, env)

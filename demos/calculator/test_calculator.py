@@ -10,9 +10,14 @@ def step(context, value):
     context.calculator.value = value
 
 
-@env.when('adding {:d}')
+@env.when('I add {:d}')
 def step(context, value):
     context.calculator.add(value)
+
+
+@env.when('I substract {:d}')
+def step(context, value):
+    context.calculator.substract(value)
 
 
 @env.then('the result is {:d}')

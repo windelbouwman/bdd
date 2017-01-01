@@ -5,8 +5,8 @@ import os
 from collections import namedtuple, defaultdict
 import parse
 
-from .parser import parse_feature
-from .util import rel
+from .parser import load_feature
+from .utils import rel
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ class Environment:
         """
         if not os.path.isabs(filename):
             filename = rel(filename, back=2)
-        feature = parse_feature(filename)
+        feature = load_feature(filename)
         return self.make_test_case(feature)
 
     def make_decorator(self, typ, pattern):
@@ -71,10 +71,7 @@ class Environment:
     def make_scenario_test_function(self, scenario):
         """ Create a function for a scenario """
         def test_impl(zelf):
-            logger.debug('Scenario: "%s"', scenario.description)
-            for step in scenario.steps:
-                logging.debug('%s %s', step.action, step.sentence)
-                self.execute_step(step)
+            Runner().run_scenario(scenario, self)
         test_impl.__doc__ = scenario.description
         return test_impl
 
@@ -83,3 +80,24 @@ class Context:
     """ This object will be passed to all the steps and can be used to store
         data """
     pass
+
+
+class Runner:
+    """ Runner for features """
+    def run(self, features, env):
+        """ Run a set of features in a given environment """
+        for feature in features:
+            for scenario in feature.scenarios:
+                try:
+                    self.run_scenario(scenario, env)
+                    print('OK')
+                except Exception as e:
+                    print('ERROR:', e)
+
+    def run_scenario(self, scenario, env):
+        """ Run a single scenario """
+        print(scenario.description)
+        logger.debug('Scenario: "%s"', scenario.description)
+        for step in scenario.steps:
+            logging.debug('%s %s', step.action, step.sentence)
+            env.execute_step(step)
